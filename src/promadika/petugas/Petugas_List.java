@@ -6,11 +6,24 @@
 package promadika.petugas;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import promadika.Index;
-import promadika.koneksi;
+import promadika.connection;
 
 /**
  *
@@ -18,12 +31,12 @@ import promadika.koneksi;
  */
 public class Petugas_List extends javax.swing.JFrame {
 
-    koneksi conn = new koneksi();
+    connection conn = new connection();
     private DefaultTableModel list;
     private String sql = "";
     private Object get_id;
     private Object get_foto;
-    private String path = "../Promadika/src/promadika/petugas/petugas_foto/";
+    private String path = conn.getFolder_Foto_Petugas() + "/";
     private String deleteFoto;
     /**
      * Creates new form Petugas_List
@@ -75,7 +88,6 @@ public class Petugas_List extends javax.swing.JFrame {
     
     public void deleteFotos(){
         deleteFoto = path + get_foto;
-        System.out.println(deleteFoto);
         File hapus = new File(deleteFoto);
         hapus.delete();
     }
@@ -333,15 +345,11 @@ public class Petugas_List extends javax.swing.JFrame {
 
             },
             new String [] {
-                "No", "NIP", "Nama ", "KUA Cabang"
+
             }
         ));
+        table_petugas.getTableHeader().setReorderingAllowed(false);
         jScrollPane3.setViewportView(table_petugas);
-        if (table_petugas.getColumnModel().getColumnCount() > 0) {
-            table_petugas.getColumnModel().getColumn(0).setMinWidth(45);
-            table_petugas.getColumnModel().getColumn(0).setPreferredWidth(45);
-            table_petugas.getColumnModel().getColumn(0).setMaxWidth(45);
-        }
 
         DetailPet.setBackground(new java.awt.Color(121, 85, 72));
         DetailPet.setFont(new java.awt.Font("Arial", 3, 11)); // NOI18N
@@ -499,14 +507,15 @@ public class Petugas_List extends javax.swing.JFrame {
         if (row != -1) {
             try {
                 sql = "Delete from data_petugas where id_petugas = '" + get_id + "'";
-                conn.setStatement(conn.getConnect().prepareStatement(sql));
-                conn.getStatement().executeUpdate(sql);
+                conn.setPreStatement(conn.getConnect().prepareStatement(sql));
+                conn.getPreStatement().executeUpdate();
             } catch (Exception e) {
                 System.out.println(e);
             }
-            deleteFotos();
+            
             list.removeRow(row);
             list.fireTableDataChanged();
+            deleteFotos();
             getData();
         } else {
             System.out.println("GAGAL HAPUS");
@@ -526,6 +535,56 @@ public class Petugas_List extends javax.swing.JFrame {
 
     private void DetailPet1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DetailPet1ActionPerformed
         // TODO add your handling code here:
+        
+        FileOutputStream fileOut = null;
+        try {
+            TableModel tableModel = table_petugas.getModel();
+            List<String> header = new ArrayList<String>();
+            for (int i = 0; i < tableModel.getColumnCount(); i++) {
+                header.add(tableModel.getColumnName(i));
+            }
+            List<List<Object>> data = new ArrayList<List<Object>>();
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                List<Object> row = new ArrayList<Object>();
+                for (int j = 0; j < tableModel.getColumnCount(); j++) {
+                    row.add(tableModel.getValueAt(i, j));
+                }
+                data.add(row);
+            }
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet();
+            HSSFRow rowHeader = sheet.createRow(0);
+            for (int i = 0; i < header.size(); i++) {
+                HSSFCell rowCell = rowHeader.createCell(i);
+                rowCell.setCellValue(header.get(i));
+            }
+            for (int i = 0; i < data.size(); i++) {
+                HSSFRow row = sheet.createRow(i + 1);
+                List<Object> dataRow = data.get(i);
+                for (int j = 0; j < dataRow.size(); j++) {
+                    HSSFCell cell = row.createCell(j);
+                    cell.setCellValue(dataRow.get(j).toString());
+                }
+            }
+            String tempFile = conn.getFolder_Excel() + "/Data_Petugas.xls";
+            File fileTemp = new File(tempFile);
+            if (fileTemp.exists()) {
+                fileTemp.delete();
+            }
+            fileOut = new FileOutputStream(tempFile);
+            workbook.write(fileOut);
+            fileOut.close();
+            Desktop.getDesktop().open(new File(tempFile));
+        } catch (IOException ex) {
+            System.out.println("eror");
+       
+        } finally {
+            try {
+                fileOut.close();
+            } catch (IOException ex) {
+                System.out.println("eror");
+            }
+        }
     }//GEN-LAST:event_DetailPet1ActionPerformed
 
     /**

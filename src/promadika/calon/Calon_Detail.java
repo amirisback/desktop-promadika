@@ -17,14 +17,14 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import promadika.Index;
-import promadika.koneksi;
+import promadika.connection;
 
 /**
  *
  * @author Faisal Amir
  */
 public class Calon_Detail extends javax.swing.JFrame {
-    koneksi conn = new koneksi();
+    connection conn = new connection();
     private String sql = "";
     private String id_calon, csuami_nik, csuami_nama, csuami_ttl, csuami_alamat,
             csuami_foto, cistri_nik, cistri_nama, cistri_ttl, cistri_alamat, cistri_foto;
@@ -87,31 +87,30 @@ public class Calon_Detail extends javax.swing.JFrame {
     }
     
     
-    public void showData(){
-        
+    public void showData() {
         try {
-            sql = "Select * from data_calon_nikah where id_calon = '"+get_id_calon+"'";
+            sql = "Select * from data_calon_nikah where id_calon = '" + get_id_calon + "'";
             conn.setStatement(conn.getConnect().createStatement());
             conn.setResultSet(conn.getStatement().executeQuery(sql));
-        while (conn.getResultSet().next()){
-            txt_id_calon.setText(conn.getResultSet().getString("id_calon"));
-            txt_csuami_nik.setText(": " + conn.getResultSet().getString("nik_csuami"));
-            txt_csuami_nama.setText(": " + conn.getResultSet().getString("nama_csuami"));
-            txt_csuami_ttl.setText(": " + conn.getResultSet().getString("ttl_csuami"));
-            txt_csuami_alamat.setText(": " + conn.getResultSet().getString("alamat_csuami"));      
-            txt_cistri_nik.setText(": " + conn.getResultSet().getString("nik_cistri"));
-            txt_cistri_nama.setText(": " + conn.getResultSet().getString("nama_cistri"));
-            txt_cistri_ttl.setText(": " + conn.getResultSet().getString("ttl_cistri"));
-            txt_cistri_alamat.setText(": " + conn.getResultSet().getString("alamat_cistri"));
-            csuami_foto = conn.getResultSet().getString("foto_csuami");
-            cistri_foto = conn.getResultSet().getString("foto_cistri");
+            while (conn.getResultSet().next()) {
+                txt_id_calon.setText(conn.getResultSet().getString("id_calon"));
+                txt_csuami_nik.setText(": " + conn.getResultSet().getString("nik_csuami"));
+                txt_csuami_nama.setText(": " + conn.getResultSet().getString("nama_csuami"));
+                txt_csuami_ttl.setText(": " + conn.getResultSet().getString("ttl_csuami"));
+                txt_csuami_alamat.setText(": " + conn.getResultSet().getString("alamat_csuami"));
+                txt_cistri_nik.setText(": " + conn.getResultSet().getString("nik_cistri"));
+                txt_cistri_nama.setText(": " + conn.getResultSet().getString("nama_cistri"));
+                txt_cistri_ttl.setText(": " + conn.getResultSet().getString("ttl_cistri"));
+                txt_cistri_alamat.setText(": " + conn.getResultSet().getString("alamat_cistri"));
+                csuami_foto = conn.getResultSet().getString("foto_csuami");
+                cistri_foto = conn.getResultSet().getString("foto_cistri");
 
-            getPathFoto = "../Promadika/src/promadika/calon/calon_foto/" + conn.getResultSet().getString("id_calon") + "/";
-            foto_pria = new File(getPathFoto + csuami_foto);
-            resizeImageCsuami();
-            foto_wanita = new File(getPathFoto + cistri_foto);
-            resizeImageCistri();
-        }
+                getPathFoto = conn.getFolder_Foto_Calon() + "/" + conn.getResultSet().getString("id_calon") + "/";
+                foto_pria = new File(getPathFoto + csuami_foto);
+                resizeImageCsuami();
+                foto_wanita = new File(getPathFoto + cistri_foto);
+                resizeImageCistri();
+            }
         } catch (Exception e) {
         }
 

@@ -5,6 +5,7 @@
  */
 package promadika.jadwal;
 
+import com.sun.glass.events.KeyEvent;
 import java.awt.Color;
 import java.util.Date;
 
@@ -12,24 +13,22 @@ import java.text.SimpleDateFormat;
 import java.util.Random;
 import javax.swing.JFrame;
 import promadika.Index;
-import promadika.koneksi;
-
+import promadika.connection;
+import promadika.function;
 /**
  *
  * @author Faisal Amir
  */
 public class Jadwal extends javax.swing.JFrame {
 
-    koneksi conn = new koneksi();
+    connection conn = new connection();
+    function func = new function();
     private String sql = "";
     private String id_nikah, id_calon, id_petugas, tempat_nikah, isiTgl, search_nama_petugas, sql_getId_petugas, id_petu;
     private int biaya;
     
     private String id_random;
-    private char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".toCharArray();
-    private StringBuilder stringBuilder = new StringBuilder();
-    private Random random = new Random();
-    private String output;
+
     
     /**
      * Creates new form Jadwal
@@ -40,21 +39,11 @@ public class Jadwal extends javax.swing.JFrame {
         conn.ConnectToDB();
         getTgl();
         tampilPetugas();
-        id_random = "IDJ"+getRandom();
+        id_random = "IDJ"+func.getRandomChar();
         txt_id_nikah.setText(id_random);
     }
     
     
-        public String getRandom() {
-        for (int lenght = 0; lenght < 5; lenght++) {
-            Character character = chars[random.nextInt(chars.length)];
-            stringBuilder.append(character);
-        }
-        output = stringBuilder.toString();
-        stringBuilder.delete(0, 5);
-
-        return output;
-    }
     public boolean isEmpty(){
         return 
                 txt_id_nikah.getText().equals("") ||
@@ -71,7 +60,7 @@ public class Jadwal extends javax.swing.JFrame {
     public void getTgl(){
         Date date = new Date();
         txt_tgl.setDate(date);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("EEEE, dd MMMM yyyy");
         isiTgl = format.format(txt_tgl.getDate());
         
     }
@@ -91,6 +80,46 @@ public class Jadwal extends javax.swing.JFrame {
         }
     }
 
+    
+    public void insertDatatoDB(){
+        try{
+            search_nama_petugas = String.valueOf(cmb_petugas.getSelectedItem());
+            id_nikah = String.valueOf(txt_id_nikah.getText());
+            id_calon = String.valueOf(txt_id_calon.getText());
+            if (isEmpty()){
+                txt_show_mesg.setText("DATA TIDAK BOLEH KOSONG");
+                txt_show_mesg.setForeground(Color.orange);
+            } else {                
+                tempat_nikah = String.valueOf(cmb_tempat.getSelectedItem());
+                String tampilan = "yyyy-MM-dd";
+                SimpleDateFormat format = new SimpleDateFormat(tampilan);
+                isiTgl = String.valueOf(format.format(txt_tgl.getDate()));
+                
+                
+                sql = "Select id_petugas from data_petugas where nama_petugas = '"+search_nama_petugas+"'";
+                conn.setStatement(conn.getConnect().createStatement());
+                conn.setResultSet(conn.getStatement().executeQuery(sql));
+                while (conn.getResultSet().next()){
+                   id_petu = conn.getResultSet().getString("id_petugas"); 
+                   id_petugas = id_petu;
+                }
+
+                sql = "INSERT INTO data_jadwal_nikah(id_nikah, tgl_nikah, tempat_nikah,"
+                      + " biaya_nikah, id_calon, id_petugas) VALUES ('"+id_nikah+"','"+isiTgl+"','"
+                      + ""+tempat_nikah+"','"+biaya+"','"+id_calon+"','"+id_petugas+"')";
+                conn.setStatement(conn.getConnect().createStatement());
+                conn.getStatement().execute(sql);
+                Clear();
+                txt_show_mesg.setText("DATA BERHASIL DI TAMBAH");
+                txt_show_mesg.setForeground(Color.white);
+            }
+        }catch(Exception e){
+            Clear();
+            txt_show_mesg.setText("GAGAL");
+            txt_show_mesg.setForeground(Color.orange);
+            System.out.println(e);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -337,17 +366,17 @@ public class Jadwal extends javax.swing.JFrame {
 
         txt_id_nikah.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
         txt_id_nikah.setMargin(new java.awt.Insets(5, 10, 10, 5));
-        txt_id_nikah.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_id_nikahActionPerformed(evt);
+        txt_id_nikah.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_id_nikahKeyPressed(evt);
             }
         });
 
         txt_id_calon.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
         txt_id_calon.setMargin(new java.awt.Insets(5, 10, 10, 5));
-        txt_id_calon.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_id_calonActionPerformed(evt);
+        txt_id_calon.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_id_calonKeyPressed(evt);
             }
         });
 
@@ -382,6 +411,11 @@ public class Jadwal extends javax.swing.JFrame {
         txt_tgl.setBackground(new java.awt.Color(255, 255, 255));
         txt_tgl.setDateFormatString("dd-MM-yyyy");
         txt_tgl.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
+        txt_tgl.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_tglKeyPressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -549,55 +583,9 @@ public class Jadwal extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jLabel16MouseClicked
 
-    private void txt_id_nikahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_id_nikahActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_id_nikahActionPerformed
-
-    private void txt_id_calonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_id_calonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_id_calonActionPerformed
-
     private void btn_tambah_jadwalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambah_jadwalActionPerformed
         // TODO add your handling code here:         
-        try{
-            search_nama_petugas = String.valueOf(cmb_petugas.getSelectedItem());
-            id_nikah = String.valueOf(txt_id_nikah.getText());
-            id_calon = String.valueOf(txt_id_calon.getText());
-            if (isEmpty()){
-                txt_show_mesg.setText("DATA TIDAK BOLEH KOSONG");
-                txt_show_mesg.setForeground(Color.orange);
-            } else {                
-                tempat_nikah = String.valueOf(cmb_tempat.getSelectedItem());
-                String tampilan = "yyyy-MM-dd";
-                SimpleDateFormat format = new SimpleDateFormat(tampilan);
-                isiTgl = String.valueOf(format.format(txt_tgl.getDate()));
-                
-                
-                sql = "select id_petugas from data_petugas where nama_petugas = '"+search_nama_petugas+"'";
-                conn.setStatement(conn.getConnect().createStatement());
-                conn.setResultSet(conn.getStatement().executeQuery(sql));
-                while (conn.getResultSet().next()){
-                   id_petu = conn.getResultSet().getString("id_petugas"); 
-                   id_petugas = id_petu;
-                }
-
-                sql = "insert into data_jadwal_nikah(id_nikah, tgl_nikah, tempat_nikah,"
-                      + " biaya_nikah, id_calon, id_petugas) value ('"+id_nikah+"','"+isiTgl+"','"
-                      + ""+tempat_nikah+"','"+biaya+"','"+id_calon+"','"+id_petugas+"')";
-                conn.setStatement(conn.getConnect().createStatement());
-                conn.getStatement().execute(sql);
-                Clear();
-                txt_show_mesg.setText("DATA BERHASIL DI TAMBAH");
-                txt_show_mesg.setForeground(Color.white);
-            }
-        }catch(Exception e){
-            Clear();
-            txt_show_mesg.setText("GAGAL");
-            txt_show_mesg.setForeground(Color.orange);
-            System.out.println(e);
-        }
-
-
+        insertDatatoDB();
     }//GEN-LAST:event_btn_tambah_jadwalActionPerformed
 
     private void cmb_tempatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmb_tempatActionPerformed
@@ -624,6 +612,27 @@ public class Jadwal extends javax.swing.JFrame {
         jadwalLs.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jLabel5MouseClicked
+
+    private void txt_id_nikahKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_id_nikahKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+    }//GEN-LAST:event_txt_id_nikahKeyPressed
+
+    private void txt_id_calonKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_id_calonKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+    }//GEN-LAST:event_txt_id_calonKeyPressed
+
+    private void txt_tglKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_tglKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER) {
+            
+        }
+    }//GEN-LAST:event_txt_tglKeyPressed
 
     /**
      * @param args the command line arguments

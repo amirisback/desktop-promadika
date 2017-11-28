@@ -4,9 +4,10 @@
  * Copyright 2017
  */
 package promadika.petugas;
+import com.sun.glass.events.KeyEvent;
 import promadika.function;
 import promadika.Index;
-import promadika.koneksi;
+import promadika.connection;
 import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -26,7 +27,7 @@ import javax.swing.JFileChooser;
  * @author Faisal Amir
  */
 public class Petugas extends javax.swing.JFrame {
-    koneksi conn = new koneksi();
+    connection conn = new connection();
     function func = new function();
     private String sql = "";
     private String id_petugas, nama, kua_cabang;
@@ -53,7 +54,7 @@ public class Petugas extends javax.swing.JFrame {
     
     public void saveFotoPetugas(){
         try {
-            path_save_foto = "../Promadika/src/promadika/petugas/petugas_foto/"+nama_foto_random;
+            path_save_foto = conn.getFolder_Foto_Petugas()+"/"+nama_foto_random;
             BufferedImage save = ImageIO.read(foto);
             ImageIO.write(save, "jpg", new File(path_save_foto));
         } catch (Exception e) {
@@ -86,6 +87,37 @@ public class Petugas extends javax.swing.JFrame {
             System.out.println(e);
         }
          
+    }
+    
+    public void insertDatatoDB(){
+        try{
+            id_petugas = String.valueOf(txt_id_petugas.getText());
+            nama = String.valueOf(txt_nama_petugas.getText());
+            kua_cabang = String.valueOf(txt_kua_cabang.getText());
+            nama_foto = String.valueOf(txt_nama_foto.getText());
+            nama_foto_random = "FTPTGS_" + func.getRandomChar() + "_" + id_petugas + ".jpg";
+
+            if (isEmpty()){
+                txt_show_mesg.setText("DATA TIDAK BOLEH KOSONG");
+                txt_show_mesg.setForeground(Color.orange);
+            } else {
+                sql = "INSERT INTO data_petugas(id_petugas, nama_petugas, "
+                        + "tempat_kua, foto) VALUES "
+                        + "('"+id_petugas+"','"+nama+"','"+kua_cabang+"','"+nama_foto_random+"')";
+                conn.setStatement(conn.getConnect().createStatement());
+                conn.setPreStatement(conn.getConnect().prepareStatement(sql));
+                conn.getPreStatement().execute();
+                saveFotoPetugas();
+
+                Clear();
+                txt_show_mesg.setText("DATA BERHASIL DI TAMBAH");
+                txt_show_mesg.setForeground(Color.white);
+            }
+        } catch (Exception e){
+            txt_show_mesg.setText("GAGAL");
+            txt_show_mesg.setForeground(Color.orange);
+            System.out.println(e);
+        }
     }
 
     /**
@@ -346,6 +378,11 @@ public class Petugas extends javax.swing.JFrame {
                 btn_tambah_petugasActionPerformed(evt);
             }
         });
+        btn_tambah_petugas.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                btn_tambah_petugasKeyPressed(evt);
+            }
+        });
 
         str_tambah_data.setFont(new java.awt.Font("Arial", 3, 24)); // NOI18N
         str_tambah_data.setForeground(new java.awt.Color(255, 255, 255));
@@ -365,12 +402,27 @@ public class Petugas extends javax.swing.JFrame {
 
         txt_id_petugas.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
         txt_id_petugas.setMargin(new java.awt.Insets(5, 10, 10, 5));
+        txt_id_petugas.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_id_petugasKeyPressed(evt);
+            }
+        });
 
         txt_nama_petugas.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
         txt_nama_petugas.setMargin(new java.awt.Insets(5, 10, 10, 5));
+        txt_nama_petugas.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_nama_petugasKeyPressed(evt);
+            }
+        });
 
         txt_kua_cabang.setFont(new java.awt.Font("Arial", 0, 15)); // NOI18N
         txt_kua_cabang.setMargin(new java.awt.Insets(5, 10, 10, 5));
+        txt_kua_cabang.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_kua_cabangKeyPressed(evt);
+            }
+        });
 
         btn_upload.setText("Upload Foto");
         btn_upload.addActionListener(new java.awt.event.ActionListener() {
@@ -549,37 +601,7 @@ public class Petugas extends javax.swing.JFrame {
 
     private void btn_tambah_petugasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambah_petugasActionPerformed
         // TODO add your handling code here:
-        try{
-            id_petugas = String.valueOf(txt_id_petugas.getText());
-            nama = String.valueOf(txt_nama_petugas.getText());
-            kua_cabang = String.valueOf(txt_kua_cabang.getText());
-            nama_foto = String.valueOf(txt_nama_foto.getText());
-            nama_foto_random = "FTPTGS_" + func.getRandomChar() + "_" + id_petugas + ".jpg";
-
-            if (isEmpty()){
-                txt_show_mesg.setText("DATA TIDAK BOLEH KOSONG");
-                txt_show_mesg.setForeground(Color.orange);
-            } else {
-                sql = "INSERT INTO data_petugas(id_petugas, nama_petugas, "
-                        + "tempat_kua, foto) VALUES "
-                        + "('"+id_petugas+"','"+nama+"','"+kua_cabang+"','"+nama_foto_random+"')";
-                conn.setStatement(conn.getConnect().createStatement());;
-                conn.setPreStatement(conn.getConnect().prepareStatement(sql));
-                conn.getPreStatement().execute();
-                path_save_foto = "../Promadika/src/promadika/petugas/petugas_foto/"+nama_foto_random;
-                saveFotoPetugas();
-                
-                
-                
-                Clear();
-                txt_show_mesg.setText("DATA BERHASIL DI TAMBAH");
-                txt_show_mesg.setForeground(Color.white);
-            }
-        } catch (Exception e){
-            txt_show_mesg.setText("GAGAL");
-            txt_show_mesg.setForeground(Color.orange);
-            System.out.println(e);
-        }
+        insertDatatoDB();
     }//GEN-LAST:event_btn_tambah_petugasActionPerformed
 
     private void btn_uploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_uploadActionPerformed
@@ -592,6 +614,32 @@ public class Petugas extends javax.swing.JFrame {
         txt_nama_foto.setText(nama_file);    
         resizeImage();
     }//GEN-LAST:event_btn_uploadActionPerformed
+
+    private void btn_tambah_petugasKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btn_tambah_petugasKeyPressed
+        // TODO add your handling code here:
+        insertDatatoDB();
+    }//GEN-LAST:event_btn_tambah_petugasKeyPressed
+
+    private void txt_kua_cabangKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_kua_cabangKeyPressed
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_kua_cabangKeyPressed
+
+    private void txt_id_petugasKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_id_petugasKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+    }//GEN-LAST:event_txt_id_petugasKeyPressed
+
+    private void txt_nama_petugasKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_nama_petugasKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+    }//GEN-LAST:event_txt_nama_petugasKeyPressed
 
     void setHover(JPanel panel){
         panel.setBackground(new Color(232,245,233));

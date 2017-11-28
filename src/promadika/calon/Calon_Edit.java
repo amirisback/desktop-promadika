@@ -6,7 +6,7 @@
 package promadika.calon;
 import promadika.Index;
 import promadika.function;
-import promadika.koneksi;
+import promadika.connection;
 
 import java.awt.Color;
 import javax.swing.JFrame;
@@ -29,7 +29,7 @@ import javax.swing.JFileChooser;
  */
 
 public class Calon_Edit extends javax.swing.JFrame {
-    koneksi conn = new koneksi();
+    connection conn = new connection();
     function func = new function();
     private String sql = "";
     private String id_calon, csuami_nik, csuami_nama, csuami_ttl, csuami_alamat, csuami_foto, cistri_nik, cistri_nama, cistri_ttl, cistri_alamat, cistri_foto;
@@ -78,7 +78,7 @@ public class Calon_Edit extends javax.swing.JFrame {
             cistri_foto = conn.getResultSet().getString("foto_cistri");
             csuami_path_file.setText(csuami_foto);
             cistri_path_file.setText(cistri_foto);
-            getPathFoto = "../Promadika/src/promadika/calon/calon_foto/" + conn.getResultSet().getString("id_calon") + "/";
+            getPathFoto = conn.getFolder_Foto_Calon() + "/" + conn.getResultSet().getString("id_calon") + "/";
             foto_pria = new File(getPathFoto + csuami_foto);
             resizeImageCsuami();
             foto_wanita = new File(getPathFoto + cistri_foto);
@@ -96,7 +96,7 @@ public class Calon_Edit extends javax.swing.JFrame {
     public void saveFoto(){
         try {
             //create folder baru
-            newfolder = "../Promadika/src/promadika/calon/calon_foto/"+get_id_calon+"/";
+            newfolder = conn.getFolder_Foto_Calon()+"/"+get_id_calon+"/";
             File folder = new File(newfolder);
             if(!folder.exists()){
                 folder.mkdir();
@@ -880,9 +880,9 @@ public class Calon_Edit extends javax.swing.JFrame {
                         + "ttl_cistri = '"+cistri_ttl+"', alamat_cistri = '"+cistri_alamat+"' "
                         + "WHERE id_calon = '"+get_id_calon+"'";
                 
-                conn.setStatement(conn.getConnect().prepareStatement(sql));
-                conn.getStatement().executeUpdate(sql);
-                txt_show_mesg.setText("DATA BERHASIL DI EDIT");
+                conn.setPreStatement(conn.getConnect().prepareStatement(sql));
+                conn.getPreStatement().executeUpdate();
+                txt_show_mesg.setText("DATA BERHASIL DI UBAH");
                 txt_show_mesg.setForeground(Color.white);
                 
 

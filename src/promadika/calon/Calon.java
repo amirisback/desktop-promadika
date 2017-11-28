@@ -4,9 +4,10 @@
  * Copyright 2017
  */
 package promadika.calon;
+import com.sun.glass.events.KeyEvent;
 import promadika.Index;
 import promadika.function;
-import promadika.koneksi;
+import promadika.connection;
 
 import java.awt.Color;
 import javax.swing.JFrame;
@@ -29,7 +30,7 @@ import javax.swing.JFileChooser;
  */
 
 public class Calon extends javax.swing.JFrame {
-    koneksi conn = new koneksi();
+    connection conn = new connection();
     function func = new function();
     private String sql = "";
     private String id_calon, csuami_nik, csuami_nama, csuami_ttl, csuami_alamat, csuami_foto, cistri_nik, cistri_nama, cistri_ttl, cistri_alamat, cistri_foto;
@@ -54,7 +55,7 @@ public class Calon extends javax.swing.JFrame {
     public void saveFoto(){
         try {
             //create folder baru
-            newfolder = "../Promadika/src/promadika/calon/calon_foto/"+id_calon;
+            newfolder = conn.getFolder_Foto_Calon() + "/"+id_calon;
             File folder = new File(newfolder);
             if(!folder.exists()){
                 folder.mkdir();
@@ -139,6 +140,44 @@ public class Calon extends javax.swing.JFrame {
         foto_cistri.setIcon(null);
         csuami_path_file.setText("");
         cistri_path_file.setText("");
+    }
+
+    public void insertDatatoDB() {
+        try {
+            id_calon = String.valueOf(txt_id_nikah.getText());
+            csuami_nik = String.valueOf(txt_csuami_nik.getText());
+            csuami_nama = String.valueOf(txt_csuami_nama.getText());
+            csuami_ttl = String.valueOf(txt_csuami_ttl.getText());
+            csuami_alamat = String.valueOf(txt_csuami_alamat.getText());
+            csuami_foto = "FTCLN_" + func.getRandomChar() + "_" + id_calon + "S.jpg";
+            cistri_nik = String.valueOf(txt_cistri_nik.getText());
+            cistri_nama = String.valueOf(txt_cistri_nama.getText());
+            cistri_ttl = String.valueOf(txt_cistri_ttl.getText());
+            cistri_alamat = String.valueOf(txt_cistri_alamat.getText());
+            cistri_foto = "FTCLN_" + func.getRandomChar() + "_" + id_calon + "I.jpg";
+
+            if (isEmpty()) {
+                txt_show_mesg.setText("DATA TIDAK BOLEH KOSONG");
+                txt_show_mesg.setForeground(Color.orange);
+            } else {
+                sql = "insert into data_calon_nikah(id_calon, nik_csuami, nama_csuami, "
+                        + "ttl_csuami, alamat_csuami, foto_csuami, nik_cistri, "
+                        + "nama_cistri, ttl_cistri, alamat_cistri, foto_cistri)"
+                        + " VALUES ('" + id_calon + "','" + csuami_nik + "','" + csuami_nama + "',"
+                        + "'" + csuami_ttl + "','" + csuami_alamat + "','" + csuami_foto + "',"
+                        + "'" + cistri_nik + "','" + cistri_nama + "','" + cistri_ttl + "',"
+                        + "'" + cistri_alamat + "','" + cistri_foto + "')";
+                conn.setStatement(conn.getConnect().createStatement());
+                conn.getStatement().execute(sql);
+                saveFoto();
+                clear();
+                txt_show_mesg.setText("DATA BERHASIL DI TAMBAH");
+                txt_show_mesg.setForeground(Color.white);
+            }
+        } catch (Exception e) {
+            txt_show_mesg.setText("GAGAL");
+            txt_show_mesg.setForeground(Color.orange);
+        }
     }
     
     
@@ -446,21 +485,41 @@ public class Calon extends javax.swing.JFrame {
 
         txt_csuami_nik.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         txt_csuami_nik.setMargin(new java.awt.Insets(10, 10, 10, 2));
+        txt_csuami_nik.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_csuami_nikKeyPressed(evt);
+            }
+        });
 
         txt_csuami_nama.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         txt_csuami_nama.setMargin(new java.awt.Insets(10, 10, 10, 2));
+        txt_csuami_nama.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_csuami_namaKeyPressed(evt);
+            }
+        });
 
         jLabel14.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel14.setText("Nama");
 
         txt_csuami_ttl.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         txt_csuami_ttl.setMargin(new java.awt.Insets(10, 10, 10, 2));
+        txt_csuami_ttl.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_csuami_ttlKeyPressed(evt);
+            }
+        });
 
         jLabel17.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel17.setText("TTL");
 
         txt_csuami_alamat.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         txt_csuami_alamat.setMargin(new java.awt.Insets(10, 10, 10, 2));
+        txt_csuami_alamat.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_csuami_alamatKeyPressed(evt);
+            }
+        });
 
         jLabel18.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel18.setText("Alamat");
@@ -583,12 +642,17 @@ public class Calon extends javax.swing.JFrame {
 
         txt_cistri_nik.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         txt_cistri_nik.setMargin(new java.awt.Insets(10, 10, 10, 2));
+        txt_cistri_nik.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_cistri_nikKeyPressed(evt);
+            }
+        });
 
         txt_cistri_nama.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         txt_cistri_nama.setMargin(new java.awt.Insets(10, 10, 10, 2));
-        txt_cistri_nama.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_cistri_namaActionPerformed(evt);
+        txt_cistri_nama.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_cistri_namaKeyPressed(evt);
             }
         });
 
@@ -597,9 +661,9 @@ public class Calon extends javax.swing.JFrame {
 
         txt_cistri_ttl.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         txt_cistri_ttl.setMargin(new java.awt.Insets(10, 10, 10, 2));
-        txt_cistri_ttl.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_cistri_ttlActionPerformed(evt);
+        txt_cistri_ttl.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_cistri_ttlKeyPressed(evt);
             }
         });
 
@@ -608,9 +672,9 @@ public class Calon extends javax.swing.JFrame {
 
         txt_cistri_alamat.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         txt_cistri_alamat.setMargin(new java.awt.Insets(10, 10, 10, 2));
-        txt_cistri_alamat.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_cistri_alamatActionPerformed(evt);
+        txt_cistri_alamat.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_cistri_alamatKeyPressed(evt);
             }
         });
 
@@ -835,58 +899,8 @@ public class Calon extends javax.swing.JFrame {
 
     private void btn_tambah_calon_nikahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambah_calon_nikahActionPerformed
         // TODO add your handling code here:
-        
-        try {
-            id_calon = String.valueOf(txt_id_nikah.getText());
-            csuami_nik = String.valueOf(txt_csuami_nik.getText());
-            csuami_nama = String.valueOf(txt_csuami_nama.getText());
-            csuami_ttl = String.valueOf(txt_csuami_ttl.getText());
-            csuami_alamat = String.valueOf(txt_csuami_alamat.getText());
-            csuami_foto = "FTCLN_" + func.getRandomChar() + "_" + id_calon + "S.jpg";
-            cistri_nik = String.valueOf(txt_cistri_nik.getText());
-            cistri_nama = String.valueOf(txt_cistri_nama.getText());
-            cistri_ttl = String.valueOf(txt_cistri_ttl.getText());
-            cistri_alamat = String.valueOf(txt_cistri_alamat.getText());
-            cistri_foto = "FTCLN_" + func.getRandomChar() + "_" + id_calon + "I.jpg";
-
-    
-            if (isEmpty()){
-                txt_show_mesg.setText("DATA TIDAK BOLEH KOSONG");
-                txt_show_mesg.setForeground(Color.orange);
-            } else {
-                sql = "insert into data_calon_nikah(id_calon, nik_csuami, nama_csuami, "
-                        + "ttl_csuami, alamat_csuami, foto_csuami, nik_cistri, "
-                        + "nama_cistri, ttl_cistri, alamat_cistri, foto_cistri)"
-                        + " VALUES ('"+id_calon+"','"+csuami_nik+"','"+csuami_nama+"',"
-                        + "'"+csuami_ttl+"','"+csuami_alamat+"','"+csuami_foto+"',"
-                        + "'"+cistri_nik+"','"+cistri_nama+"','"+cistri_ttl+"',"
-                        + "'"+cistri_alamat+"','"+cistri_foto+"')";
-                conn.setStatement(conn.getConnect().createStatement());
-                conn.getStatement().execute(sql);
-                saveFoto();
-                clear();
-                txt_show_mesg.setText("DATA BERHASIL DI TAMBAH");
-                txt_show_mesg.setForeground(Color.white);
-            }
-        } catch (Exception e) {
-            txt_show_mesg.setText("GAGAL");
-            txt_show_mesg.setForeground(Color.orange);
-        }
-        
-
+        insertDatatoDB();
     }//GEN-LAST:event_btn_tambah_calon_nikahActionPerformed
-
-    private void txt_cistri_namaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_cistri_namaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_cistri_namaActionPerformed
-
-    private void txt_cistri_ttlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_cistri_ttlActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_cistri_ttlActionPerformed
-
-    private void txt_cistri_alamatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_cistri_alamatActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_cistri_alamatActionPerformed
 
     private void upload_fotoPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upload_fotoPActionPerformed
         // TODO add your handling code here:
@@ -917,6 +931,62 @@ public class Calon extends javax.swing.JFrame {
         resizeImageCistri();
         
     }//GEN-LAST:event_upload_fotoWActionPerformed
+
+    private void txt_csuami_nikKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_csuami_nikKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+    }//GEN-LAST:event_txt_csuami_nikKeyPressed
+
+    private void txt_csuami_namaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_csuami_namaKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+    }//GEN-LAST:event_txt_csuami_namaKeyPressed
+
+    private void txt_csuami_ttlKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_csuami_ttlKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+    }//GEN-LAST:event_txt_csuami_ttlKeyPressed
+
+    private void txt_csuami_alamatKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_csuami_alamatKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+    }//GEN-LAST:event_txt_csuami_alamatKeyPressed
+
+    private void txt_cistri_nikKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_cistri_nikKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+    }//GEN-LAST:event_txt_cistri_nikKeyPressed
+
+    private void txt_cistri_namaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_cistri_namaKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+    }//GEN-LAST:event_txt_cistri_namaKeyPressed
+
+    private void txt_cistri_ttlKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_cistri_ttlKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+    }//GEN-LAST:event_txt_cistri_ttlKeyPressed
+
+    private void txt_cistri_alamatKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_cistri_alamatKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            insertDatatoDB();
+        }
+    }//GEN-LAST:event_txt_cistri_alamatKeyPressed
 
     /**
      * @param args the command line arguments

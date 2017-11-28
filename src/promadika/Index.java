@@ -5,6 +5,7 @@
  */
 package promadika;
 
+import java.io.File;
 import promadika.petugas.Petugas;
 import promadika.jadwal.Jadwal;
 import promadika.calon.Calon;
@@ -16,14 +17,24 @@ import javax.swing.JOptionPane;
  * @author Faisal Amir
  */
 public class Index extends javax.swing.JFrame {
-
+    connection conn = new connection();
     /**
      * Creates new form Index
      */
     public Index() {
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        conn.ConnectToDB();
+        conn.createAllTable();
+        conn.dataPromadika();
     }
+    
+    
+
+            
+            
+            
+
 
     /**
      * This method is called from within the constructor to initialize the form.

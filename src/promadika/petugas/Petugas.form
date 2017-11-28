@@ -470,6 +470,7 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_tambah_petugasActionPerformed"/>
+                <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="btn_tambah_petugasKeyPressed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="str_tambah_data">
@@ -591,6 +592,9 @@
                       <Insets value="[5, 10, 10, 5]"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_id_petugasKeyPressed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JTextField" name="txt_nama_petugas">
                   <Properties>
@@ -601,6 +605,9 @@
                       <Insets value="[5, 10, 10, 5]"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_nama_petugasKeyPressed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JTextField" name="txt_kua_cabang">
                   <Properties>
@@ -611,6 +618,9 @@
                       <Insets value="[5, 10, 10, 5]"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_kua_cabangKeyPressed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="btn_upload">
                   <Properties>

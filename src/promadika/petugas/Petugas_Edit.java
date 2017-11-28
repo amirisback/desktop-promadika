@@ -4,8 +4,9 @@
  * Copyright 2017
  */
 package promadika.petugas;
+
 import promadika.Index;
-import promadika.koneksi;
+import promadika.connection;
 import promadika.function;
 
 import java.awt.Color;
@@ -32,7 +33,7 @@ import javax.swing.JFileChooser;
  * @author Faisal Amir
  */
 public class Petugas_Edit extends javax.swing.JFrame {
-    koneksi conn = new koneksi();
+    connection conn = new connection();
     function func = new function();
     Petugas_List data = new Petugas_List();
     private Object get_id_petugas;
@@ -91,7 +92,7 @@ public class Petugas_Edit extends javax.swing.JFrame {
                 txt_nama_petugas.setText(conn.getResultSet().getString("nama_petugas"));
                 txt_kua_cabang.setText(conn.getResultSet().getString("tempat_kua"));
                 nama_foto_fromDb = conn.getResultSet().getString("foto");
-                path_save_foto = "../Promadika/src/promadika/petugas/petugas_foto/"+nama_foto_fromDb;
+                path_save_foto = conn.getFolder_Foto_Petugas()+"/"+nama_foto_fromDb;
                 foto = new File(path_save_foto);
                 resizeImage();
                 txt_nama_foto.setText(nama_foto_fromDb);
@@ -109,10 +110,12 @@ public class Petugas_Edit extends javax.swing.JFrame {
         }
     }
     
-    
     private void Clear(){
         txt_nama_petugas.setText("");
         txt_kua_cabang.setText("");
+        txt_nama_foto.setText("");
+        foto_petugas.setText("Foto 3x4");
+        foto_petugas.setIcon(null);
     }
 
     /**
@@ -588,13 +591,14 @@ public class Petugas_Edit extends javax.swing.JFrame {
                 kua_cabang = String.valueOf(txt_kua_cabang.getText());
                 inputFoto = new FileInputStream(foto);
                 nama_foto = String.valueOf(txt_nama_foto.getText());
-                path_save_foto = "../Promadika/src/promadika/petugas/petugas_foto/"+nama_foto_fromDb;
+                path_save_foto = conn.getFolder_Foto_Petugas()+"/"+nama_foto_fromDb;
                 sql = "Update data_petugas set nama_petugas = '" + nama + "', "
                         + "tempat_kua = '" + kua_cabang + "' "
                         + "where id_petugas = '" + get_id_petugas + "'";
-                conn.setStatement(conn.getConnect().prepareStatement(sql));
-                conn.getStatement().executeUpdate(sql);
+                conn.setPreStatement(conn.getConnect().prepareStatement(sql));
+                conn.getPreStatement().executeUpdate();
                 saveFotoPetugas();
+                Clear();
                 txt_show_mesg.setText("DATA BERHASIL DI UBAH");
                 txt_show_mesg.setForeground(Color.white);
             }

@@ -7,12 +7,13 @@ package promadika.jadwal;
 
 import java.awt.Color;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Date;
 
 import java.text.SimpleDateFormat;
 import javax.swing.JFrame;
 import promadika.Index;
-import promadika.koneksi;
+import promadika.connection;
 
 /**
  *
@@ -20,13 +21,14 @@ import promadika.koneksi;
  */
 public class Jadwal_Edit extends javax.swing.JFrame {
 
-    koneksi conn = new koneksi();
+    connection conn = new connection();
     private String sql = "";
     private String id_nikah, id_calon, id_petugas, tempat_nikah, isiTgl, search_nama_petugas, sql_getId_petugas, id_petu;
     private int biaya;
     private Object get_id_jadwal;
     /**
      * Creates new form Jadwal
+     * @param get_id_jadwal
      */
 
     public Jadwal_Edit(Object get_id_jadwal) {
@@ -34,7 +36,6 @@ public class Jadwal_Edit extends javax.swing.JFrame {
         this.get_id_jadwal = get_id_jadwal;
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         conn.ConnectToDB();
-        System.out.println(get_id_jadwal);
         showData();
         tampilPetugas();
         
@@ -60,11 +61,16 @@ public class Jadwal_Edit extends javax.swing.JFrame {
                 txt_id_nikah.setText(conn.getResultSet().getString("id_nikah"));
                 txt_id_calon.setText(conn.getResultSet().getString("id_calon"));
                 txt_tgl.setDate(conn.getResultSet().getDate("tgl_nikah"));
+                Date date = new SimpleDateFormat("EEEE, dd MMMM yyyy").parse(conn.getResultSet().getString("tgl_nikah"));
+                txt_tgl.setDate(date);
                 cmb_petugas.setSelectedItem(conn.getResultSet().getString("nama_petugas"));
                 cmb_tempat.setSelectedItem(conn.getResultSet().getString("tempat_nikah"));
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println("GAGAL");
+            System.out.println(e);
+        } catch (ParseException e){
+            e.printStackTrace();
         }
  
     }
@@ -86,7 +92,7 @@ public class Jadwal_Edit extends javax.swing.JFrame {
     
     public void tampilPetugas(){
         try{
-            sql = "select * from data_petugas";
+            sql = "Select * From data_petugas";
             conn.setStatement(conn.getConnect().createStatement());
             conn.setResultSet(conn.getStatement().executeQuery(sql));
             while (conn.getResultSet().next()){
@@ -582,9 +588,9 @@ public class Jadwal_Edit extends javax.swing.JFrame {
                         + "tempat_nikah = '"+tempat_nikah+"', biaya_nikah = '"+biaya+"', "
                         + "id_calon = '"+id_calon+"', id_petugas = '"+id_petugas+"' "
                         + "WHERE id_nikah = '"+get_id_jadwal+"'";
-                conn.setStatement(conn.getConnect().prepareStatement(sql));
-                conn.getStatement().executeUpdate(sql);
-                txt_show_mesg.setText("DATA BERHASIL DI EDIT");
+                conn.setPreStatement(conn.getConnect().prepareStatement(sql));
+                conn.getPreStatement().executeUpdate();
+                txt_show_mesg.setText("DATA BERHASIL DI UBAH");
                 txt_show_mesg.setForeground(Color.white);
             }
         }catch(SQLException e){

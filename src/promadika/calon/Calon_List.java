@@ -6,22 +6,32 @@
 
 package promadika.calon;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import promadika.Index;
-import promadika.koneksi;
+import promadika.connection;
 
 /**
  *
  * @author Faisal Amir
  */
 public class Calon_List extends javax.swing.JFrame {
-    koneksi conn = new koneksi();
+    connection conn = new connection();
     private DefaultTableModel list;
     private String sql = "";
     private Object get_id;
-    private String path = "../Promadika/src/promadika/calon/calon_foto/";
+    private String path = conn.getFolder_Foto_Calon()+ "/";
     private String deleteFoto;
      
     /** 
@@ -83,7 +93,6 @@ public class Calon_List extends javax.swing.JFrame {
     
     public void deleteFotos(){
         deleteFoto = path + get_id;
-        System.out.println(deleteFoto);
         File folder = new File(deleteFoto);
         if (folder.exists()){
             File[] isiFolder = folder.listFiles();
@@ -351,6 +360,7 @@ public class Calon_List extends javax.swing.JFrame {
 
             }
         ));
+        table_calon.getTableHeader().setReorderingAllowed(false);
         jScrollPane3.setViewportView(table_calon);
 
         DetailPet1.setBackground(new java.awt.Color(51, 51, 51));
@@ -507,12 +517,12 @@ public class Calon_List extends javax.swing.JFrame {
         // TODO add your handling code here:
         int row = table_calon.getSelectedRow(); // untuk mendapatkan row yang di select
         get_id = list.getValueAt(row, 1); 
-// untuk mendapatkan primary key / id knp row, 1 soalnya angka 1 urutannya di tempat ku sebagai primary key
+        // untuk mendapatkan primary key / id knp row, 1 soalnya angka 1 urutannya di tempat ku sebagai primary key
         if (row != -1) {
             try {
                 sql = "Delete from data_calon_nikah where id_calon = '"+get_id+"'";
-                conn.setStatement(conn.getConnect().prepareStatement(sql));
-                conn.getStatement().executeUpdate(sql);
+                conn.setPreStatement(conn.getConnect().prepareStatement(sql));
+                conn.getPreStatement().executeUpdate();
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -527,6 +537,55 @@ public class Calon_List extends javax.swing.JFrame {
 
     private void DetailPet1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DetailPet1ActionPerformed
         // TODO add your handling code here:
+        FileOutputStream fileOut = null;
+        try {
+            TableModel tableModel = table_calon.getModel();
+            List<String> header = new ArrayList<String>();
+            for (int i = 0; i < tableModel.getColumnCount(); i++) {
+                header.add(tableModel.getColumnName(i));
+            }
+            List<List<Object>> data = new ArrayList<List<Object>>();
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                List<Object> row = new ArrayList<Object>();
+                for (int j = 0; j < tableModel.getColumnCount(); j++) {
+                    row.add(tableModel.getValueAt(i, j));
+                }
+                data.add(row);
+            }
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet();
+            HSSFRow rowHeader = sheet.createRow(0);
+            for (int i = 0; i < header.size(); i++) {
+                HSSFCell rowCell = rowHeader.createCell(i);
+                rowCell.setCellValue(header.get(i));
+            }
+            for (int i = 0; i < data.size(); i++) {
+                HSSFRow row = sheet.createRow(i + 1);
+                List<Object> dataRow = data.get(i);
+                for (int j = 0; j < dataRow.size(); j++) {
+                    HSSFCell cell = row.createCell(j);
+                    cell.setCellValue(dataRow.get(j).toString());
+                }
+            }
+            String tempFile = conn.getFolder_Excel() + "/Data_Calon.xls";
+            File fileTemp = new File(tempFile);
+            if (fileTemp.exists()) {
+                fileTemp.delete();
+            }
+            fileOut = new FileOutputStream(tempFile);
+            workbook.write(fileOut);
+            fileOut.close();
+            Desktop.getDesktop().open(new File(tempFile));
+        } catch (IOException ex) {
+            System.out.println("eror");
+       
+        } finally {
+            try {
+                fileOut.close();
+            } catch (IOException ex) {
+                System.out.println("eror");
+            }
+        }
 
     }//GEN-LAST:event_DetailPet1ActionPerformed
 

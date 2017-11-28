@@ -14,13 +14,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import promadika.Index;
-import promadika.koneksi;
+import promadika.connection;
 /**
  *
  * @author Faisal Amir
  */
 public class Petugas_Detail extends javax.swing.JFrame {
-    koneksi conn = new koneksi();
+    connection conn = new connection();
     private String sql = "";
     private String nama_foto_fromDb, path_save_foto;
     private File foto;
@@ -73,10 +73,9 @@ public class Petugas_Detail extends javax.swing.JFrame {
                 txt_nama_petugas.setText(": \t\t " + conn.getResultSet().getString("nama_petugas"));
                 txt_kua_cabang.setText(": \t\t KUA " + conn.getResultSet().getString("tempat_kua"));
                 nama_foto_fromDb = conn.getResultSet().getString("foto");
-                path_save_foto = "../Promadika/src/promadika/petugas/petugas_foto/"+nama_foto_fromDb;
+                path_save_foto = conn.getFolder_Foto_Petugas()+"/"+nama_foto_fromDb;
                 foto = new File(path_save_foto);
                 resizeImage();
-
             }
         } catch (SQLException e) {
         }
