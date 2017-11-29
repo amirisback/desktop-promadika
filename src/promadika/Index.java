@@ -5,37 +5,36 @@
  */
 package promadika;
 
-import java.io.File;
+//Import file petugas, jadwal, calon------------------------------------------
 import promadika.petugas.Petugas;
 import promadika.jadwal.Jadwal;
 import promadika.calon.Calon;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+//Wajib mengimport file jika file berada di beda folder tetapi 1 package;
+//------------------------------------------------------------------------------
+
+import javax.swing.JFrame; //Import library swing GUI
+import javax.swing.JOptionPane; //Import library swing GUI
+import java.io.File; //Import library file
 
 /**
  *
  * @author Faisal Amir
  */
 public class Index extends javax.swing.JFrame {
-    connection conn = new connection();
+    connection conn = new connection(); //Memanggil koneksi yang sudah di buat
+    
     /**
      * Creates new form Index
      */
+    
     public Index() {
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        conn.ConnectToDB();
-        conn.createAllTable();
-        conn.dataPromadika();
+        conn.ConnectToDB(); //jembatan pengkoneksi antara program dan database        
+        //conn.createAllTable(); //Jika Pakai SQLite wajib membuat table (DDL) sendiri
+        conn.dataPromadika(); //Membuat Folder Data
     }
     
-    
-
-            
-            
-            
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -253,26 +252,29 @@ public class Index extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        // Link ganti class menuju promadika.jadwal Jadwal.java-----------------
         Jadwal jadwal = new Jadwal();
         jadwal.setVisible(true);
-
         this.dispose();
+        // ---------------------------------------------------------------------
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        // Link ganti class menuju promadika.petugas Petugas.java---------------
         Petugas petugas = new Petugas();
         petugas.setVisible(true);
-
         this.dispose();
+        // ---------------------------------------------------------------------
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        // Link ganti class menuju promadika.calon Calon.java-------------------
         Calon calon = new Calon();
         calon.setVisible(true);
-
-        this.dispose();;
+        this.dispose();
+        // ---------------------------------------------------------------------
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

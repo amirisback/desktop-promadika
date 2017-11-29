@@ -5,22 +5,28 @@
  */
 package promadika.calon;
 import com.sun.glass.events.KeyEvent;
+
 import promadika.Index;
 import promadika.function;
 import promadika.connection;
 
 import java.awt.Color;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.io.File;
-import java.io.FileInputStream;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 
@@ -30,7 +36,7 @@ import javax.swing.JFileChooser;
  */
 
 public class Calon extends javax.swing.JFrame {
-    connection conn = new connection();
+    connection conn = new connection(); //Memanggil Koneksi yang sudah di buat
     function func = new function();
     private String sql = "";
     private String id_calon, csuami_nik, csuami_nama, csuami_ttl, csuami_alamat, csuami_foto, cistri_nik, cistri_nama, cistri_ttl, cistri_alamat, cistri_foto;
@@ -52,7 +58,7 @@ public class Calon extends javax.swing.JFrame {
         txt_id_nikah.setText(id_random);
     }
     
-    public void saveFoto(){
+    public void saveFoto(){ 
         try {
             //create folder baru
             newfolder = conn.getFolder_Foto_Calon() + "/"+id_calon;

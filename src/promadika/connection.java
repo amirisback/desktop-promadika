@@ -6,37 +6,58 @@
  */
 package promadika;
 
-import java.io.File;
+import java.io.File; //import library file
+
+//import library dari pluggin library JDBC MySQL--------------------------------
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+//------------------------------------------------------------------------------
 
 /**
  *
  * @author Faisal Amir
  */
 public class connection {
+    //Deklarasi data path hasil program ----------------------------------------
+    private String Folder_Data = "C:/promadika";
+    private String Folder_Foto = "C:/promadika/Data_Foto";
+    private String Folder_Excel = "C:/promadika/Data_Excel";
+    private String Folder_Foto_Petugas = Folder_Foto + "/Foto_Petugas";
+    private String Folder_Foto_Calon = Folder_Foto + "/Foto_Calon";
+    //--------------------------------------------------------------------------
+    
+    
+    //Deklarasi operasi CRUD Database-------------------------------------------
     private PreparedStatement preStatement;
     private Statement statement;
     private Connection connect;
     private ResultSet resultSet;
+    //--------------------------------------------------------------------------
+    
+    
+    //Koneksi MySQL-------------------------------------------------------------
     private String driver = "com.mysql.jdbc.Driver";
-    private String Folder_Data = "C:/promadika";
-    private String Folder_Foto = "C:/promadika/Data_Foto";
-    private String Folder_Excel = "C:/promadika/Data_Excel";
-    private String Nama_database = "DataBasePromadika.db";
-    private String url = Folder_Data + "/" + Nama_database;
-    private String url_db = "jdbc:sqlite:" + url;
-    private String Folder_Foto_Petugas = Folder_Foto + "/Foto_Petugas";
-    private String Folder_Foto_Calon = Folder_Foto + "/Foto_Calon";
-    private String sql_table_data_petugas;
-    private String sql_table_data_calon_nikah;
-    private String sql_table_data_jadwal_nikah;
-
+    private String url_db = "jdbc:mysql://localhost:3306/promadika";
+    private String user_db = "root";
+    private String pw_db = "";
+    //--------------------------------------------------------------------------
+    
+    
+    //Koneksi SQLite------------------------------------------------------------
+    //private String driver = "com.mysql.jdbc.Driver";
+    //private String Nama_database = "DataBasePromadika.db";
+    //private String url = Folder_Data + "/" + Nama_database;
+    //private String url_db = "jdbc:sqlite:" + url;
+    //private String sql_table_data_petugas;
+    //private String sql_table_data_calon_nikah;
+    //private String sql_table_data_jadwal_nikah;
+    //--------------------------------------------------------------------------
+    
     public connection() {
     }
 
@@ -88,6 +109,22 @@ public class connection {
         this.url_db = url_db;
     }
 
+    public String getUser_db() {
+        return user_db;
+    }
+
+    public void setUser_db(String user_db) {
+        this.user_db = user_db;
+    }
+
+    public String getPw_db() {
+        return pw_db;
+    }
+
+    public void setPw_db(String pw_db) {
+        this.pw_db = pw_db;
+    }
+    
     public String getFolder_Data() {
         return Folder_Data;
     }
@@ -112,6 +149,7 @@ public class connection {
         this.Folder_Excel = Folder_Excel;
     }
 
+    /*Setter Getter Database SQLite---------------------------------------------
     public String getNama_database() {
         return Nama_database;
     }
@@ -127,23 +165,7 @@ public class connection {
     public void setUrl(String url) {
         this.url = url;
     }
-
-    public String getFolder_Foto_Petugas() {
-        return Folder_Foto_Petugas;
-    }
-
-    public void setFolder_Foto_Petugas(String Folder_Foto_Petugas) {
-        this.Folder_Foto_Petugas = Folder_Foto_Petugas;
-    }
-
-    public String getFolder_Foto_Calon() {
-        return Folder_Foto_Calon;
-    }
-
-    public void setFolder_Foto_Calon(String Folder_Foto_Calon) {
-        this.Folder_Foto_Calon = Folder_Foto_Calon;
-    }
-
+    
     public String getSql_table_data_petugas() {
         return sql_table_data_petugas;
     }
@@ -167,7 +189,25 @@ public class connection {
     public void setSql_table_data_jadwal_nikah(String sql_table_data_jadwal_nikah) {
         this.sql_table_data_jadwal_nikah = sql_table_data_jadwal_nikah;
     }
+    --------------------------------------------------------------------------*/
     
+    public String getFolder_Foto_Petugas() {
+        return Folder_Foto_Petugas;
+    }
+
+    public void setFolder_Foto_Petugas(String Folder_Foto_Petugas) {
+        this.Folder_Foto_Petugas = Folder_Foto_Petugas;
+    }
+
+    public String getFolder_Foto_Calon() {
+        return Folder_Foto_Calon;
+    }
+
+    public void setFolder_Foto_Calon(String Folder_Foto_Calon) {
+        this.Folder_Foto_Calon = Folder_Foto_Calon;
+    }
+
+    /*Create DataBase SQLite----------------------------------------------------
     public void createAllTable(){
         sql_table_data_petugas = "CREATE TABLE data_petugas (\n"
                 + "    id_petugas   VARCHAR (15)  PRIMARY KEY,\n"
@@ -212,8 +252,8 @@ public class connection {
         } catch (SQLException e) {
         }
 
-    }
-    
+    }   
+    --------------------------------------------------------------------------*/
     
     public void ConnectToDB(){
         try{
@@ -221,16 +261,26 @@ public class connection {
             if (!folder.exists()) {
                 folder.mkdir();
             }
-            connect = DriverManager.getConnection(url_db);
-            DatabaseMetaData meta = connect.getMetaData();
-        }catch (SQLException e){
+            
+            //Source Code Koneksi MySQL-----------------------------------------
+            Class.forName(driver);
+            connect = DriverManager.getConnection(url_db, user_db, pw_db);       
+            //------------------------------------------------------------------
+            
+            
+            //Source Code Koneksi SQLite----------------------------------------
+            //connect = DriverManager.getConnection(url_db);
+            //DatabaseMetaData meta = connect.getMetaData();
+            //------------------------------------------------------------------
+            
+        }catch (Exception e){
             System.out.println(e);
         }
     }
         
     public void dataPromadika() {
         try {
-            //create folder baru
+            //Membuat Folder Data------------------------------------------------
 
             File folder_foto = new File(Folder_Foto);
             if (!folder_foto.exists()) {
@@ -252,11 +302,9 @@ public class connection {
                 foto_calon.mkdir();
             }
  
+            //------------------------------------------------------------------
         } catch (Exception e) {
             System.out.println(e);
         }
     }
-    
-    
-
 }

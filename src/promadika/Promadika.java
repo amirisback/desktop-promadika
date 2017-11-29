@@ -6,7 +6,7 @@
 package promadika;
 
 /**
- *
+ * Main Class Project Promadika
  * @author Faisal Amir
  */
 public class Promadika extends javax.swing.JFrame {
@@ -14,11 +14,6 @@ public class Promadika extends javax.swing.JFrame {
     public static void main(String args[]) {
         //TODO Code Logic Here
         new Index().setVisible(true);
-        
-        
-        
-        
-       
     }
 
 }
