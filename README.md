@@ -1,4 +1,4 @@
-![ScreenShoot Apps](other/docs/banner.png?raw=true)
+![ScreenShoot Apps](other/doc/banner.png?raw=true)
 
 # About This Project
 Program Informasi Pendataan Nikah
@@ -13,7 +13,7 @@ What's New??
     * Promadika Project *
 
 # ScreenShoot Apps
-![ScreenShoot Apps](other/docs/screenshoot/SS1.png?raw=true)
+![ScreenShoot Apps](other/doc/screenshoot/SS1.png?raw=true)
 
 # Colaborator
 Very open to anyone, I'll write your name under this, please contribute by sending an email to me
