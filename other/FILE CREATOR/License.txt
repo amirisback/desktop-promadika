@@ -1,0 +1,18 @@
+============== PROMADIKA ==============
+---------------------------------------
+PROGRAM INFORMASI PENDATAAN NIKAH
+---------------------------------------
+COPYRIGHT 2017 PROMADIKA
+ALL RIGHT RESERVED
+---------------------------------------
+TELKOM UNIVERSITY
+D3 TEKNIK INFORMATIKA
+D3IF-40-02
+---------------------------------------
+CREATED BY : 
+1. MUHAMMAD FAISAL AMIR
+2. RIZKY HILMAN F
+3. KRISNA SETIAWAN
+---------------------------------------
+PEMROGRAMAN BERORIENTASI OBJECT
+=======================================

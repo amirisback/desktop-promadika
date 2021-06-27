@@ -1,0 +1,39 @@
+Program Informasi Pendataan Nikah
+PROMADIKA
+
+//Data_Calon_Nikah
+1. Id_calon PK
+2. nama_csuami
+3. ttl_csuami
+4. alamat_csuami
+5. foto_csuami
+6. nama_cistri
+7. ttl_cistri
+8. alamat_cistri
+9. foto_cistri
+
+//Data_Petugas
+1. Id_petugas PK
+2. nama_petugas
+3. tempat_kua
+
+//Data_jadwal_nikah
+1. Id_nikah
+2. tgl_nikah
+3. tempat_nikah
+4. biaya_nikah
+5. id_calon fk
+6. id_petugas fk
+
+"Tidak ada penawar yang lebih manjur bagi dua insan yang saling mencintai di banding PERNIKAHAN" (HR. Ibnu Majah)
+
+Width : 846
+Height : 532
+
+Font : HOBO STD
+Warna Title : #12852d
+Warna Dasar : #b2f7db
+Warna Icon : #5D4037
+Warna Icon2 : #a1887f
+Warna Background Icon : #c8e6c9
+Warna Background tulisan Icon :#33691E
