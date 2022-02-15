@@ -24,7 +24,7 @@ Very open to anyone, I'll write your name under this, please contribute by sendi
 
 Name Of Contribute
 - Muhammad Faisal Amir
-- Waiting List
+- Rizki Hilman Faturahman
 - Waiting List
 
 Waiting for your contribute
